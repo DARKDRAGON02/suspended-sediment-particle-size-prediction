@@ -1,29 +1,28 @@
 # Suspended Sediment Particle Size Prediction
 
-A reproducible comparison of Random Forest, Support Vector Regression (SVR), and XGBoost for estimating median particle diameter (`d50`) and particle-size-distribution variance (`sigma2`). The primary notebook preserves the supplied step-by-step workflow and its result table.
+A reproducible comparison of Random Forest, Support Vector Regression (SVR), and XGBoost for estimating median particle diameter (`d50`) and particle-size-distribution variance (`sigma2`). The notebook preserves the original step-by-step structure but corrects the evaluation procedure to avoid target leakage.
 
 ## Dataset and provenance
 
-`data/synthetic_data_improved.csv` is the supplied synthetic dataset. It contains 1,648 hourly rows, eight environmental predictor columns, and two targets (`d50`, `sigma2`). Predictor values include missing entries. This is synthetic data, not the original Stanford dataset or measured field observations.
+`data/synthetic_data_improved.csv` is the supplied synthetic dataset. It contains 1,648 hourly rows, eight environmental predictor columns, and two targets (`d50`, `sigma2`). Predictor values include missing entries. This is synthetic data, not verified field observations or the original Stanford dataset.
 
-## Workflow used in the original notebook
+## Corrected evaluation workflow
 
-1. Remove the time column and drop incomplete rows (1,402 records remain).
-2. Remove rows at or above the 99th percentile for either target (1,384 remain).
-3. Split randomly into 70% train and 30% test using `random_state=42` (968 train, 416 test).
-4. Use the four predictors `S`, `ub`, `np`, and `T`.
-5. Fit Random Forest, tuned SVR (5-fold grid search with standard scaling), and XGBoost separately for each target.
-6. Evaluate on the same held-out test rows using R², RMSE, and MAE.
+1. Remove the time column and rows with missing values (1,402 complete rows remain).
+2. Split the data into 70% training and 30% test rows using `random_state=42` (981 train, 421 test).
+3. Fit Random Forest feature importance using training data only and select the four highest ranked predictors. In the current run these are `ub`, `S`, `chl_a`, and `T`.
+4. Fit Random Forest, standardized SVR with a five-fold grid search, and XGBoost separately for each target. Feature selection and hyperparameter tuning use training data only.
+5. Evaluate once on the held-out test rows with R², RMSE, and MAE.
 
-The outlier thresholds are calculated before the split in the supplied notebook. This means test-target values affect which records are retained, which can make the reported scores optimistic. The results should be interpreted as a reproducible classroom comparison on synthetic data, not validated real-world performance. Small differences in the last decimal may occur across library versions.
+No rows are removed based on target values. This avoids using held-out target labels to choose which observations remain. The random split measures performance on similar rows from this synthetic dataset; it does not establish performance on future time periods or real field samples. Scores may vary slightly across library versions.
 
 ## Project files
 
-- `notebooks/ML mini project.ipynb` — supplied step-by-step notebook with executed outputs, metrics table, and charts
-- `run_project.py` — executable version of the same model workflow
-- `data/synthetic_data_improved.csv` — supplied data
-- `results/` — generated metrics, test predictions, feature importance, run metadata, and chart
-- `Suspended_Sediment_Particle_Size_Project_Report.pdf` — two-page summary using the same split and workflow
+- `notebooks/ML mini project.ipynb` — step-by-step executed notebook with the comparison table and plots
+- `run_project.py` — executable version of the same workflow
+- `data/synthetic_data_improved.csv` — supplied dataset
+- `results/` — metrics, test predictions, training-only feature importance, run metadata, and chart
+- `Suspended_Sediment_Particle_Size_Project_Report.pdf` — two-page report generated from the same results
 
 ## Setup and run
 
@@ -49,14 +48,12 @@ pip install -r requirements.txt
 python run_project.py
 ```
 
-Open the step-by-step notebook from the project directory with:
+Open the notebook from the project directory:
 
 ```bash
 jupyter notebook "notebooks/ML mini project.ipynb"
 ```
 
-The script writes `results/model_metrics.csv`, `results/test_predictions.csv`, `results/feature_importance.csv`, `results/run_metadata.csv`, and `results/r2_comparison.png`.
+## Repository
 
-## Private GitHub repository
-
-This project is hosted in the private repository `DARKDRAGON02/suspended-sediment-particle-size-prediction`. Collaborators can clone it and follow the setup steps above.
+The project is hosted in the private repository `DARKDRAGON02/suspended-sediment-particle-size-prediction`.
