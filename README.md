@@ -1,40 +1,52 @@
 # Suspended Sediment Particle Size Prediction
 
-A reproducible comparison of Random Forest, Support Vector Regression (SVR), and XGBoost for estimating median particle diameter (`d50`) and particle-size-distribution variance (`sigma2`). The notebook preserves the original step-by-step structure but corrects the evaluation procedure to avoid target leakage.
+This project compares Random Forest, Support Vector Regression (SVR), and XGBoost for estimating median particle diameter (`d50`) and distribution variance (`sigma2`) from the supplied synthetic dataset.
 
-## Dataset and provenance
+## Data
 
-`data/synthetic_data_improved.csv` is the supplied synthetic dataset. It contains 1,648 hourly rows, eight environmental predictor columns, and two targets (`d50`, `sigma2`). Predictor values include missing entries. This is synthetic data, not verified field observations or the original Stanford dataset.
+`data/synthetic_data_improved.csv` is the dataset supplied for the project. It contains 1,648 rows with eight predictors and two targets. The data are synthetic; results should not be interpreted as validation on field measurements.
 
-## Corrected evaluation workflow
+## Notebook and reported workflow
 
-1. Remove the time column and rows with missing values (1,402 complete rows remain).
-2. Split the data into 70% training and 30% test rows using `random_state=42` (981 train, 421 test).
-3. Fit Random Forest feature importance using training data only and select the four highest ranked predictors. In the current run these are `ub`, `S`, `chl_a`, and `T`.
-4. Fit Random Forest, standardized SVR with a five-fold grid search, and XGBoost separately for each target. Feature selection and hyperparameter tuning use training data only.
-5. Evaluate once on the held-out test rows with R², RMSE, and MAE.
+`notebooks/ML mini project.ipynb` is the original notebook provided for this project. It is preserved byte-for-byte, including its saved cell outputs and comparison table. A copy of the supplied CSV is placed beside the notebook because the notebook loads `synthetic_data_improved.csv` by a relative filename.
 
-No rows are removed based on target values. This avoids using held-out target labels to choose which observations remain. The random split measures performance on similar rows from this synthetic dataset; it does not establish performance on future time periods or real field samples. Scores may vary slightly across library versions.
+The notebook removes the time column and incomplete rows (1,402 remain), then removes rows at or above either target's 99th percentile (1,384 remain). It uses a shuffled 70/30 split with `random_state=42` (968 training rows, 416 test rows), eight input variables for a Random Forest importance table, and a fixed four-feature set (`S`, `ub`, `np`, `T`) for the three regressors. SVR uses a standardized pipeline and five-fold grid search.
 
-## Project files
+### Evaluation caveats
 
-- `notebooks/ML mini project.ipynb` — step-by-step executed notebook with the comparison table and plots
-- `run_project.py` — executable version of the same workflow
-- `data/synthetic_data_improved.csv` — supplied dataset
-- `results/` — metrics, test predictions, training-only feature importance, run metadata, and chart
-- `Suspended_Sediment_Particle_Size_Project_Report.pdf` — two-page report generated from the same results
+- The 99th-percentile cutoffs are calculated from all complete rows before the train/test split. Since they use target values from rows later assigned to the test set, the reported scores may be optimistic for an untouched future sample.
+- The feature-importance table ranks `ub`, `S`, `T`, and `chl_a` highest in the saved notebook output. The notebook's manually specified model inputs are `S`, `ub`, `np`, and `T`. The reported results use that fixed list; the discrepancy is documented here because the notebook is preserved unchanged.
+- This is a random holdout from synthetic data. It does not measure future-period forecasting performance or performance on field samples.
+- Re-running with different library versions can change scores slightly. The PDF and saved `results/model_metrics.csv` report the values in the original notebook's saved comparison table.
+
+## Notebook-reported test metrics
+
+| Model | d50 R² | d50 RMSE | d50 MAE | sigma2 R² | sigma2 RMSE | sigma2 MAE |
+|---|---:|---:|---:|---:|---:|---:|
+| Random Forest | 0.839729 | 15.769309 | 12.557175 | 0.904587 | 7.931298 | 6.251205 |
+| SVR | 0.854116 | 15.044842 | 11.969561 | 0.914782 | 7.495579 | 5.801557 |
+| XGBoost | 0.849638 | 15.274025 | 12.284159 | 0.913948 | 7.532165 | 5.880333 |
+
+## Files
+
+- `notebooks/ML mini project.ipynb` — original step-by-step notebook with saved outputs and final comparison table
+- `notebooks/synthetic_data_improved.csv` — same supplied CSV, beside the notebook for its relative data path
+- `run_project.py` — runnable script that follows the notebook workflow and writes files in `results/`
+- `data/synthetic_data_improved.csv` — project dataset
+- `results/` — feature importance, model metrics, metadata, test predictions, and chart
+- `Suspended_Sediment_Particle_Size_Project_Report.pdf` — two-page report matching the notebook's saved comparison table and documenting the evaluation caveats
 
 ## Setup and run
 
-Python 3.10 or newer is recommended.
+Python 3.10 or newer is recommended. From the project root:
 
 ```bash
 python -m venv .venv
 ```
 
-Activate the environment, install dependencies, and run the script:
+Activate the environment and install dependencies:
 
-```bash
+```powershell
 # Windows PowerShell
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -48,12 +60,8 @@ pip install -r requirements.txt
 python run_project.py
 ```
 
-Open the notebook from the project directory:
+To open the preserved notebook from the project root:
 
 ```bash
 jupyter notebook "notebooks/ML mini project.ipynb"
 ```
-
-## Repository
-
-The project is hosted in the private repository `DARKDRAGON02/suspended-sediment-particle-size-prediction`.

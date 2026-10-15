@@ -1,2 +1,2 @@
-original_rows,complete_rows,train_rows,test_rows,split,features_selected_on_training_data,outlier_filtering,svr_best_params_d50,svr_best_params_sigma2,rf_oob_r2_d50,rf_oob_r2_sigma2
-1648,1402,981,421,"train_test_split(test_size=0.30, random_state=42)","ub, S, chl_a, T",none; all complete rows retained,"{'svr__C': 100, 'svr__epsilon': 0.5}","{'svr__C': 100, 'svr__epsilon': 0.1}",0.5957421895071893,0.728415409455669
+original_rows,complete_rows,filtered_rows,train_rows,test_rows,split,fixed_features_used,target_filtering,svr_best_params_d50,svr_best_params_sigma2,rf_oob_r2_d50,rf_oob_r2_sigma2
+1648,1402,1384,968,416,"train_test_split(test_size=0.30, random_state=42)","S, ub, np, T",remove rows at/above each full-data 99th percentile before splitting,"{'svr__C': 100, 'svr__epsilon': 2}","{'svr__C': 100, 'svr__epsilon': 2}",0.8434626099195349,0.8988506509907089
