@@ -9,7 +9,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data" / "synthetic_data_improved.csv"
-RESULTS = ROOT / "results"
+# Keep generated reruns separate from the saved notebook-reference results.
+RESULTS = ROOT / "results" / "recomputed"
 FEATURES = ["S", "ub", "np", "T", "a676_a650", "a450_a676", "chl_a", "u"]
 TOP_FEATURES = ["S", "ub", "np", "T"]
 TARGETS = ["d50", "sigma2"]

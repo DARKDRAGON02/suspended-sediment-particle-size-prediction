@@ -1,0 +1,2 @@
+source,original_rows,complete_rows,filtered_rows,train_rows,test_rows,split,features_used,target_filtering,svr_best_params_d50,svr_best_params_sigma2,rf_oob_r2_d50,rf_oob_r2_sigma2
+saved notebook outputs,1648,1402,1384,968,416,"train_test_split(test_size=0.30, random_state=42)","S; ub; np; T","remove at/above each full-data target 99th percentile before splitting","{'svr__C': 100, 'svr__epsilon': 2}","{'svr__C': 100, 'svr__epsilon': 2}",0.843458,0.898849

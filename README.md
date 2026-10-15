@@ -17,7 +17,7 @@ The notebook removes the time column and incomplete rows (1,402 remain), then re
 - The 99th-percentile cutoffs are calculated from all complete rows before the train/test split. Since they use target values from rows later assigned to the test set, the reported scores may be optimistic for an untouched future sample.
 - The feature-importance table ranks `ub`, `S`, `T`, and `chl_a` highest in the saved notebook output. The notebook's manually specified model inputs are `S`, `ub`, `np`, and `T`. The reported results use that fixed list; the discrepancy is documented here because the notebook is preserved unchanged.
 - This is a random holdout from synthetic data. It does not measure future-period forecasting performance or performance on field samples.
-- Re-running with different library versions can change scores slightly. The PDF and saved `results/model_metrics.csv` report the values in the original notebook's saved comparison table.
+- Re-running with different library versions can change scores slightly. The PDF and `results/notebook_reference/model_metrics.csv` preserve the values in the original notebook's saved comparison table.
 
 ## Notebook-reported test metrics
 
@@ -31,9 +31,10 @@ The notebook removes the time column and incomplete rows (1,402 remain), then re
 
 - `notebooks/ML mini project.ipynb` — original step-by-step notebook with saved outputs and final comparison table
 - `notebooks/synthetic_data_improved.csv` — same supplied CSV, beside the notebook for its relative data path
-- `run_project.py` — runnable script that follows the notebook workflow and writes files in `results/`
+- `run_project.py` — runnable script that follows the notebook workflow and writes fresh files in `results/recomputed/`
 - `data/synthetic_data_improved.csv` — project dataset
-- `results/` — feature importance, model metrics, metadata, test predictions, and chart
+- `results/notebook_reference/` — metric table, feature-importance table, metadata, and chart transcribed from the notebook's saved outputs; the script does not overwrite these reference files
+- `results/recomputed/` — fresh metrics, predictions, feature importance, metadata, and chart created by running the script
 - `Suspended_Sediment_Particle_Size_Project_Report.pdf` — two-page report matching the notebook's saved comparison table and documenting the evaluation caveats
 
 ## Setup and run
